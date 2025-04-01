@@ -6,13 +6,15 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.1",
-    "node": "^18.20.8"
+    "node": "^18.20.8",
+    "nodemailer": "^6.10.0"
   },
   "name": "shopzybackend",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node server.js"
   },
   "keywords": [],
   "author": "",
