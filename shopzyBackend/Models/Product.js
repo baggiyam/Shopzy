@@ -1,7 +1,7 @@
 const mongoose=require("mongoose")
 const Schema=mongoose.Schema;
 
-const Products=new Schema({
+const productSchema=new Schema({
 
   
     skuid:{
@@ -50,5 +50,5 @@ required:true
     ]
 
 },{timestamps:true})
-const Product = mongoose.model("Product", productSchema);
-module.exports = Product;
+const Products = mongoose.model("Products", productSchema);
+module.exports = Products;
