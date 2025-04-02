@@ -171,5 +171,66 @@ router.post("/resend", async (req, res) => {
         return res.status(500).json({ message: "Server error!",error: error.message });
     }
 })
+router.post("/forgotpassword",async(req,res)=>{
+    const {email}=req.body;
+ try{
+    const user=await User.findOne({email});
+if(!user){
+    return res.status(400).json({message:"user not found"})
+}
+const resetToken = Math.floor(100000 + Math.random() * 900000); 
+    const expires = Date.now() + 15 * 60 * 1000; 
 
+    user.verificationToken = resetToken;
+    user.verificationTokenExpiration=expires;
+   
+    await user.save();
+    const mailOptions = {
+        from: `"shopzy Team" <${process.env.ADMIN_EMAIL}>`,
+        to: email,
+        subject: "Password Reset Request",
+        text: `Hello ${user.username},\n\nYour password reset code is:\n\n${resetToken}\n\nThis code will expire in 15 minutes.`,
+      };
+      await transporter.sendMail(mailOptions);
+
+    res.status(200).json({ message: "Password reset code sent to your email." });
+ }
+catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error!", error:error.message});
+  }
+})
+
+router.post("/resetpassword",async(req,res)=>{
+    const{email, resetcode,newPassword}=req.body;
+    try{
+        const user=await User.findOne({email});
+        if(!user){
+            return res.status(400).json({message:"User not found"})
+        }
+        if(user.verificationToken!==Number(resetcode)){
+
+        
+            return res.status(400).json({message:"Invalid code"})
+        }
+        if (user.verificationTokenExpiration < Date.now()) {
+            return res.status(400).json({ message: "Reset code expired!" });
+          }
+          const salt = await bcrypt.genSalt(10);
+          const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+          user.password = hashedPassword;
+          user.verificationToken = undefined;
+          user.verificationTokenExpiration = undefined;
+          await user.save();
+
+    res.status(200).json({ message: "Password reset successful! You can now log in." });
+    
+    }
+
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Server error!" });
+      }
+})
 module.exports = router;
