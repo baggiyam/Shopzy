@@ -6,6 +6,7 @@ dotenv.config();
 
 //Routes import
 const authroutes= require("./Routes/authroutes");
+const productroutes = require("./Routes/productroutes");
 
 const app=express();
 
@@ -18,6 +19,8 @@ app.use((req, res, next) => {
 });
 //signup
 app.use("/api",authroutes)
+//product Routes
+app.use("/product",productroutes)
 
 mongoose.connect(process.env.MONGO_URI,{
   
