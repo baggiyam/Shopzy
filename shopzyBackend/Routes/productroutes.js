@@ -34,4 +34,19 @@ catch (error) {
 }
 
 })
+router.get("/products",async(req,res)=>{
+    try{
+
+        const products=await Products.find();
+
+        if(!products){
+            return res(400).json({message:"No products available"})
+        }
+        res.status(200).json(products);
+    }
+    catch(error){
+        res.status(500).json({message:"something went wrong",error:error.message})
+
+    }
+})
 module.exports = router;
