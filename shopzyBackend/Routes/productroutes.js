@@ -49,4 +49,39 @@ router.get("/products",async(req,res)=>{
 
     }
 })
+router.get("/category",async(req,res)=>{
+    const {category,price_lte,price_gte}=req.query ;
+    try{
+        const filter={};
+
+        if(category){
+            filter.category = new RegExp(category, "i");
+
+        }
+        if (price_lte || price_gte) {
+            filter.price = {};  
+            if (price_lte) filter.price.$lte = Number(price_lte);  
+            if (price_gte) filter.price.$gte = Number(price_gte);
+        }
+        const products = await Product.find(filter);
+        console.log("Filter:", filter);
+
+        if (products.length === 0) {
+            return res.status(404).json({ message: 'No products found' });
+        }
+
+        res.status(200).json(products)
+    }catch(error){
+        res.status(500).json({message:"something went wrong",error:error.message})
+    }
+})
+router.get("/:id", async (req, res) => {
+    try {
+        const product = await Product.findById(req.params.id);
+        if (!product) return res.status(404).json({ message: "Product not found" });
+        res.status(200).json(product);
+    } catch (error) {
+        res.status(500).json({ message: "Error fetching product", error: error.message });
+    }
+});
 module.exports = router;
