@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 const Schema = mongoose.Schema;
-const Order = new Schema({
+const orderSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
@@ -70,7 +70,7 @@ const Order = new Schema({
         type: Date,
     },
     status: {
-        type: String,
+        enum: [Pending,processing,shipped,completed],
         required: true,
         default: 'Pending',
     },
