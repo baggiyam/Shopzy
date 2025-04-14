@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import LoginPage from '../Pages/Login'
 import SignupPage from '../Pages/SignupPage'
+import CodeVerificationPage from '../Pages/CodeVerficationPage'
 
 function App() {
   return (
@@ -12,7 +13,8 @@ function App() {
         <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignupPage />} />
-        {/* Add verify, forgot-password routes etc. here later */}
+        <Route path="/verify" element={<CodeVerificationPage />} />
+
       </Routes>
     </Router>
   );

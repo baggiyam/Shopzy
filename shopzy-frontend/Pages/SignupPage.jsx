@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 import "../Styles/login.css";
+
 const SignupPage = () => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
@@ -13,10 +14,16 @@ const SignupPage = () => {
     const handleSignup = async (e) => {
         e.preventDefault();
         try {
+
             const res = await axios.post('http://localhost:5004/api/signup', { username, email, password });
+
             setSuccess(res.data.message);
             setError('');
-            setTimeout(() => navigate('/verify'), 2000); // Redirect to verification
+
+            // Navigate to the verification page with the email passed in the state
+            setTimeout(() => {
+                navigate('/verify', { state: { email } });
+            }, 2000);
         } catch (err) {
             setError(err.response?.data?.message || 'Signup failed');
             setSuccess('');

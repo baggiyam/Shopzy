@@ -1,0 +1,97 @@
+/* Container for the entire page */
+.verification-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f3f3f3;
+    padding: 0 20px;
+}
+
+/* Card-style form container */
+.verification-card {
+    background-color: #fff;
+    width: 100%;
+    max-width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    text-align: center;
+}
+
+/* Title of the form */
+.verification-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Style for the form labels */
+.verification-form label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #555;
+    text-align: left;
+    display: block;
+    margin-bottom: 8px;
+    margin-top: 15px;
+}
+
+/* Style for the form input fields */
+.verification-form input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0 20px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    color: #333;
+}
+
+/* Button style for the verify button */
+.verify-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #f0a500;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+/* Hover effect for the button */
+.verify-button:hover {
+    background-color: #d88a00;
+}
+
+/* Success message styling */
+.success-message {
+    color: green;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+/* Error message styling */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+/* Footer link for resending the code */
+.resend-footer {
+    font-size: 14px;
+    margin-top: 15px;
+}
+
+.resend-footer a {
+    color: #0066c0;
+    text-decoration: none;
+}
+
+.resend-footer a:hover {
+    text-decoration: underline;
+}
