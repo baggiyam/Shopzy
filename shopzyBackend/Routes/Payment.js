@@ -8,16 +8,15 @@ router.post("/payment", async (req, res) => {
     const { orderId } = req.body;
   
     try {
-      // Retrieve the order to get total amount
+      
       const order = await Order.findById(orderId);
       if (!order) {
         return res.status(404).json({ message: "Order not found" });
       }
-  
-      // Create a payment intent with Stripe
+ 
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: order.totalPrice * 100, // Amount in cents
-        currency: "usd", // Or your currency
+        amount: order.totalPrice * 100,
+        currency: "usd", 
         metadata: { orderId: order._id.toString() },
       });
   
