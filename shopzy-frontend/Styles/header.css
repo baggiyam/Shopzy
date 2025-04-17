@@ -1,0 +1,36 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #232f3e;
+    color: white;
+}
+
+.logo {
+    font-size: 1.8rem;
+    font-weight: bold;
+    text-decoration: none;
+    color: white;
+}
+
+.search-bar {
+    width: 300px;
+    padding: 8px;
+    border-radius: 4px 0 0 4px;
+    border: none;
+}
+
+.search-button {
+    padding: 8px 12px;
+    background-color: #febd69;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+}
+
+.header-right a {
+    margin-left: 15px;
+    text-decoration: none;
+    color: white;
+}
