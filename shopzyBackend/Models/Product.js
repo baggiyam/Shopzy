@@ -62,7 +62,7 @@ const productSchema = new Schema({
         type: Boolean,
         default: false
       },
-      isNew: {
+      isnew: {
         type: Boolean,
         default: false
       },

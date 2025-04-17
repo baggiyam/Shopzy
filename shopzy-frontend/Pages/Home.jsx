@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Header from '../Components/Header';
-import Footer from '../Components/Footer';
-import '../Styles/home.css'; 
+
+import '../Styles/home.css';
 
 const Home = () => {
     const [featured, setFeatured] = useState([]);
     const [trending, setTrending] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
-    const [error, setError] = useState(null); 
-    const [loading, setLoading] = useState(true); 
+    const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -21,64 +20,111 @@ const Home = () => {
                     axios.get('http://localhost:5004/product/new'),
                 ]);
 
-
-                console.log('Featured Products:', featuredRes.data);
-                console.log('Trending Products:', trendingRes.data);
-                console.log('New Arrivals:', newRes.data);
-
                 setFeatured(featuredRes.data);
                 setTrending(trendingRes.data);
                 setNewArrivals(newRes.data);
-                setLoading(false); // Stop loading
-            } catch (error) {
                 setLoading(false);
+            } catch (error) {
                 setError('Error fetching products');
-                console.error("Error fetching products:", error);
+                setLoading(false);
             }
         };
 
         fetchProducts();
     }, []);
 
-    const renderProducts = (products) => (
-        <div className="product-grid">
-            {products.length === 0 ? (
-                <p>No products available</p>
-            ) : (
-                products.map((product) => (
-                    <div className="product-card" key={product._id}>
-                        <img src={product.image} alt={product.name} />
-                        <h4>{product.name}</h4>
-                        <p>${product.price}</p>
-                    </div>
-                ))
-            )}
+    // Function to add product to cart (localStorage or backend depending on login state)
+    const addToCart = (product) => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            // If the user is logged in, add to the backend cart
+            axios.post('http://localhost:5004/cart/add', { productId: product._id }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+                .then(() => {
+                    alert(`${product.name} added to Cart!`);
+                })
+                .catch(() => {
+                    alert('Failed to add item to Cart');
+                });
+        } else {
+            // If the user is not logged in, store the item in localStorage
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push({ ...product, quantity: 1 });
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${product.name} added to Cart!`);
+        }
+    };
+
+    // Function to add product to wishlist (localStorage or backend depending on login state)
+    const addToWishlist = (product) => {
+        const token = localStorage.getItem('token');
+
+        if (token) {
+            axios.post('http://localhost:5004/wishlist/add', { productId: product._id }, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            })
+                .then(() => alert(`${product.name} added to Wishlist!`))
+                .catch(() => alert('Failed to add item to Wishlist'));
+        } else {
+            let wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+
+            if (!wishlist.some(item => item._id === product._id)) {
+                wishlist.push(product);
+                localStorage.setItem('wishlist', JSON.stringify(wishlist));
+                console.log('Wishlist updated in localStorage:', wishlist);
+                alert(`${product.name} added to Wishlist!`);
+            }
+        }
+    };
+
+    // Function to render a product row with a title
+    const renderRow = (title, products) => (
+        <div className="section">
+            <h2>{title}</h2>
+            <div className="product-row">
+                {products.length === 0 ? (
+                    <p>No products available</p>
+                ) : (
+                    products.map((product) => (
+                        <div className="product-card" key={product._id}>
+                            <img src={product.image} alt={product.name} />
+                            <div className="product-info">
+                                <h4>{product.name}</h4>
+                                <p>${product.price}</p>
+                            </div>
+                            <div className="product-actions">
+                                <button onClick={() => addToCart(product)}>Add to Cart</button>
+                                <button onClick={() => addToWishlist(product)}>❤️ Wishlist</button>
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
         </div>
     );
 
     return (
         <div className="home-container">
-            <Header />
+
             <div className="main-content">
                 {error && <div className="error-message">{error}</div>}
 
-              
                 {loading ? (
-                    <div>Loading...</div>
+                    <div className="loading">Loading products...</div>
                 ) : (
                     <>
-                        <h2>Featured Products</h2>
-                        {renderProducts(featured)}
-
-                        <h2>Trending Now</h2>
-                        {renderProducts(trending)}
-
-                        <h2>New Arrivals</h2>
-                        {renderProducts(newArrivals)}
+                        {renderRow('Featured Products', featured)}
+                        {renderRow('Trending Now', trending)}
+                        {renderRow('New Arrivals', newArrivals)}
                     </>
                 )}
             </div>
-            <Footer />
+
         </div>
     );
 };

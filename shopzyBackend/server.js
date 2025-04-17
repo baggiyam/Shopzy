@@ -7,8 +7,8 @@ dotenv.config();
 //Routes import
 const authroutes= require("./Routes/authroutes");
 const productroutes = require("./Routes/productroutes");
-const cartRoute=require("./Routes/cartRoute")
-
+const cartRoute=require("./Routes/cart")
+const wishlistRoute=require("./Routes/wishlist")
 const app=express();
 
 app.use(express.json());
@@ -24,6 +24,7 @@ app.use("/api",authroutes)
 app.use("/product",productroutes)
 //cart Routes
 app.use("/cart",cartRoute)
+app.use("/wishlist",wishlistRoute)
 
 mongoose.connect(process.env.MONGO_URI,{
   

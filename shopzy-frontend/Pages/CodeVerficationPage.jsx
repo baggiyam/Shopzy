@@ -17,11 +17,12 @@ const CodeVerificationPage = () => {
             const res = await axios.post('http://localhost:5004/api/verification', { email, verificationCode });
             setSuccess(res.data.message);
             setTimeout(() => {
-                navigate('/'); // Redirect to homepage or login page after success
+                navigate('/'); 
             }, 2000);
         } catch (err) {
             setError(err.response?.data?.message || 'Verification failed');
         }
+        window.location.reload()
     };
 
     const handleResendCode = async () => {
