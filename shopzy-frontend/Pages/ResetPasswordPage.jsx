@@ -30,7 +30,7 @@ const ResetPasswordPage = () => {
                 newPassword
             });
             setMessage(res.data.message);
-            setTimeout(() => navigate("/login"), 2000);
+            setTimeout(() => navigate("/login"), 1000);
         } catch (err) {
             setError(err.response?.data?.message || "Reset failed");
         } finally {

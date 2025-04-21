@@ -7,7 +7,7 @@ const Header = () => {
     const [query, setQuery] = useState('');
     const navigate = useNavigate();
     const { token, logout } = useContext(AuthContext);
-    console.log("Token from context:", token);
+
     const handleSearch = () => {
         if (query.trim()) {
             navigate(`/search?q=${encodeURIComponent(query.trim())}`);

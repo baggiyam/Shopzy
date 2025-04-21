@@ -44,7 +44,12 @@ router.post('/add', auth, async (req, res) => {
   });
   router.get('/', auth, async (req, res) => {
     try {
-      const cart = await Cart.findOne({ userId: req.user._id }).populate('items.productId');
+      const cart = await Cart.findOne({ userId: req.user._id })
+        .populate({
+          path: 'items.productId',
+          select: 'name price image description'  
+        });
+  
       res.status(200).json(cart || { items: [] });
     } catch (error) {
       res.status(500).json({ message: "Error fetching cart", error: error.message });

@@ -22,7 +22,7 @@ const Cart = () => {
                         },
                     });
                 }
-                // Clear local cart after syncing
+
                 localStorage.removeItem('cart');
             } catch (err) {
                 console.error('Error syncing local cart to backend:', err);

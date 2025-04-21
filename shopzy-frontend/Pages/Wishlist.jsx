@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
 import { useNavigate } from 'react-router-dom';
 import '../Styles/wishlist.css';
 
@@ -13,8 +12,6 @@ const Wishlist = () => {
     useEffect(() => {
         const fetchWishlistItems = async () => {
             const token = localStorage.getItem('token');
-            console.log('Wishlist component loaded');
-            console.log('Token:', token);
 
             try {
                 if (token) {
@@ -25,21 +22,14 @@ const Wishlist = () => {
                         },
                     });
 
-                    console.log('Wishlist from backend:', response.data);
                     setWishlistItems(Array.isArray(response.data.items) ? response.data.items : []);
-
                 } else {
                     // Fetch wishlist from localStorage if not logged in
                     const wishlistRaw = localStorage.getItem('wishlist');
-                    console.log('Raw wishlist from localStorage:', wishlistRaw);
-
                     const storedWishlistItems = JSON.parse(wishlistRaw);
-                    console.log('Parsed wishlist:', storedWishlistItems);
-
                     setWishlistItems(Array.isArray(storedWishlistItems) ? storedWishlistItems : []);
                 }
             } catch (err) {
-                console.error('Error fetching wishlist:', err);
                 setError('Failed to fetch wishlist items');
             } finally {
                 setLoading(false);
@@ -102,7 +92,6 @@ const Wishlist = () => {
 
     return (
         <div className="wishlist-container">
-
             <div className="wishlist-main">
                 {loading ? (
                     <p>Loading wishlist...</p>
@@ -120,8 +109,8 @@ const Wishlist = () => {
                                     <div className="wishlist-item-info">
                                         <h4>{item.name}</h4>
                                         <p>${item.price}</p>
-                                        <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
                                         <button onClick={() => handleAddToCart(item)}>Add to Cart</button>
+                                        <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
                                     </div>
                                 </div>
                             ))
@@ -129,7 +118,6 @@ const Wishlist = () => {
                     </div>
                 )}
             </div>
-
         </div>
     );
 };
