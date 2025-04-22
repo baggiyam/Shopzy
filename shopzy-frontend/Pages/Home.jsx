@@ -15,9 +15,9 @@ const Home = () => {
             try {
                 setLoading(true);
                 const [featuredRes, trendingRes, newRes] = await Promise.all([
-                    axios.get('http://localhost:5004/product/featured'),
-                    axios.get('http://localhost:5004/product/trending'),
-                    axios.get('http://localhost:5004/product/new'),
+                    axios.get(`${import.meta.env.VITE_API_BASE_URL}/product/featured`),
+                    axios.get(`${import.meta.env.VITE_API_BASE_URL}/product/trending`),
+                    axios.get(`${import.meta.env.VITE_API_BASE_URL}/product/new`),
                 ]);
 
                 setFeatured(featuredRes.data);
@@ -38,7 +38,7 @@ const Home = () => {
         const token = localStorage.getItem('token');
         if (token) {
             // If the user is logged in, add to the backend cart
-            axios.post('http://localhost:5004/cart/add', { productId: product._id }, {
+            axios.post(`${import.meta.env.VITE_API_BASE_URL}/cart/add`, { productId: product._id }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -63,7 +63,7 @@ const Home = () => {
         const token = localStorage.getItem('token');
 
         if (token) {
-            axios.post('http://localhost:5004/wishlist/add', { productId: product._id }, {
+            axios.post(`${import.meta.env.VITE_API_BASE_URL}/wishlist/add`, { productId: product._id }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

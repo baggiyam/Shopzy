@@ -15,7 +15,7 @@ const SearchResults = () => {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const res = await axios.get(`http://localhost:5004/product/search?q=${encodeURIComponent(query)}`);
+                const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/product/search?q=${encodeURIComponent(query)}`);
                 setResults(res.data);
             } catch (err) {
                 setError(err.response?.data?.message || "Search failed");
@@ -29,7 +29,7 @@ const SearchResults = () => {
 
     return (
         <>
-          
+
             <div className="main-content">
                 <h2>Search Results for: "{query}"</h2>
 
@@ -47,7 +47,7 @@ const SearchResults = () => {
                     ))}
                 </div>
             </div>
-           
+
         </>
     );
 };

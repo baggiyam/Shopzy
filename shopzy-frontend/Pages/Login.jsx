@@ -18,7 +18,7 @@ const LoginPage = () => {
 
         try {
             // Send login request to backend
-            const res = await axios.post('http://localhost:5004/api/login', { email, password });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/login`, { email, password });
             console.log(res.data); // Check if the token is there
             const token = res.data.token;
 

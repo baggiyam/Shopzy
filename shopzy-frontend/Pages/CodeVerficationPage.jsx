@@ -14,7 +14,7 @@ const CodeVerificationPage = () => {
     const handleVerifyCode = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5004/api/verification', { email, verificationCode });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/verification`, { email, verificationCode });
             setSuccess(res.data.message);
             setTimeout(() => {
                 navigate('/');
@@ -29,7 +29,7 @@ const CodeVerificationPage = () => {
         setLoading(true);
         try {
             // Call the resend API
-            const res = await axios.post('http://localhost:5004/api/resend', { email });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/resend`, { email });
             setSuccess(res.data.message);
         } catch (err) {
             setError(err.response?.data?.message || 'Failed to resend verification code');

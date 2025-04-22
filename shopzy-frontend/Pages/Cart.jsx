@@ -15,7 +15,7 @@ const Cart = () => {
         const syncLocalCartToBackend = async (localCart) => {
             try {
                 for (const item of localCart) {
-                    await axios.post('http://localhost:5004/cart/add', { productId: item._id, quantity: item.quantity }, {
+                    await axios.post(`${import.meta.env.VITE_API_BASE_URL}/cart/add`, { productId: item._id, quantity: item.quantity }, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
@@ -36,7 +36,7 @@ const Cart = () => {
                         await syncLocalCartToBackend(localCart);
                     }
 
-                    const response = await axios.get('http://localhost:5004/cart/', {
+                    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/cart/`, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
@@ -66,7 +66,7 @@ const Cart = () => {
         const quantity = 1; // Default quantity is 1
 
         if (token) {
-            axios.post('http://localhost:5004/cart/add', { productId: product._id, quantity }, {
+            axios.post(`${import.meta.env.VITE_API_BASE_URL}/cart/add`, { productId: product._id, quantity }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -87,7 +87,7 @@ const Cart = () => {
 
     const handleRemoveItem = (productId) => {
         if (token) {
-            axios.delete(`http://localhost:5004/cart/remove/${productId}`, {
+            axios.delete(`${import.meta.env.VITE_API_BASE_URL}/cart/remove/${productId}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -122,7 +122,7 @@ const Cart = () => {
 
         if (token) {
             // Send request to backend to update the cart if logged in
-            axios.post('http://localhost:5004/cart/update',
+            axios.post(`${import.meta.env.VITE_API_BASE_URL}/cart/update`,
                 { productId, quantity: newQuantity },
                 {
                     headers: {

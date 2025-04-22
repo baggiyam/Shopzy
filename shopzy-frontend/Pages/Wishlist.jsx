@@ -16,7 +16,7 @@ const Wishlist = () => {
             try {
                 if (token) {
                     // Fetch wishlist from backend if logged in
-                    const response = await axios.get('http://localhost:5004/wishlist/', {
+                    const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/wishlist/`, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
@@ -69,7 +69,7 @@ const Wishlist = () => {
 
         if (token) {
             // Add to backend cart
-            axios.post('http://localhost:5004/cart/add', { productId: product._id }, {
+            axios.post(`${import.meta.env.VITE_API_BASE_URL}/cart/add`, { productId: product._id }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

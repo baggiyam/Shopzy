@@ -19,7 +19,7 @@ const ForgotPasswordPage = () => {
         setMessage('');
 
         try {
-            const res = await axios.post('http://localhost:5004/api/forgotpassword', { email });
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/forgotpassword`, { email });
             setMessage(res.data.message);
             setStep(2); // Go to code verification step
         } catch (err) {
@@ -36,7 +36,7 @@ const ForgotPasswordPage = () => {
         setMessage('');
 
         try {
-            const res = await axios.post('http://localhost:5004/api/resetpassword', {
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/resetpassword`, {
                 email,
                 resetcode: resetCode,
                 newPassword
