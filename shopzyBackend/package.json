@@ -7,6 +7,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.1",
     "node": "^18.20.8",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^6.10.0"
   },
   "name": "shopzybackend",
@@ -20,6 +22,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
   "description": ""
 }
