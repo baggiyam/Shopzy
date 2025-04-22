@@ -4,7 +4,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const router = express.Router();
 const nodemailer = require("nodemailer");
-const User = require("../Models/User")
+const User = require("../Models/UserShopzy")
 require("dotenv").config();
 
 

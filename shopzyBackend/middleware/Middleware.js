@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const User=require("../Models/User");
+const User=require("../Models/UserShopzy");
 const { model } = require('mongoose');
 
 const auth=async(req,res,next)=>{
