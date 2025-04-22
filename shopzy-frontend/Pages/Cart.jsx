@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
 import axios from 'axios';
-
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../Context/AuthContext';
 import '../Styles/cart.css';
@@ -16,13 +15,12 @@ const Cart = () => {
         const syncLocalCartToBackend = async (localCart) => {
             try {
                 for (const item of localCart) {
-                    await axios.post('http://localhost:5004/cart/add', { productId: item._id }, {
+                    await axios.post('http://localhost:5004/cart/add', { productId: item._id, quantity: item.quantity }, {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
                 }
-
                 localStorage.removeItem('cart');
             } catch (err) {
                 console.error('Error syncing local cart to backend:', err);
@@ -34,24 +32,19 @@ const Cart = () => {
                 const localCart = JSON.parse(localStorage.getItem('cart')) || [];
 
                 if (token) {
-                    // If user is logged in and local cart exists, sync it first
                     if (localCart.length > 0) {
                         await syncLocalCartToBackend(localCart);
                     }
 
-                    // Then fetch cart from backend
                     const response = await axios.get('http://localhost:5004/cart/', {
                         headers: {
                             Authorization: `Bearer ${token}`,
                         },
                     });
 
-                    // If backend returns { items: [...] }
                     const backendItems = response.data?.items || [];
-
                     setCartItems(backendItems);
                 } else {
-                    // Not logged in - use localStorage
                     setCartItems(localCart);
                 }
             } catch (err) {
@@ -65,21 +58,28 @@ const Cart = () => {
     }, [token]);
 
     const handleAddToCart = (product) => {
+        if (!product || !product._id) {
+            console.error('Invalid product:', product);
+            return;
+        }
+
+        const quantity = 1; // Default quantity is 1
+
         if (token) {
-            axios.post('http://localhost:5004/cart/add', { productId: product._id }, {
+            axios.post('http://localhost:5004/cart/add', { productId: product._id, quantity }, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
             })
                 .then(() => {
-                    setCartItems(prevItems => [...prevItems, product]);
+                    setCartItems(prevItems => [...prevItems, { ...product, quantity, price: product.price }]);
                 })
-                .catch(() => {
-                    console.log('Failed to add item to cart');
+                .catch((err) => {
+                    console.log('Failed to add item to cart', err);
                 });
         } else {
             const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            storedCartItems.push(product);
+            storedCartItems.push({ ...product, quantity, price: product.price });
             localStorage.setItem('cart', JSON.stringify(storedCartItems));
             setCartItems(storedCartItems);
         }
@@ -105,14 +105,51 @@ const Cart = () => {
             setCartItems(updatedCartItems);
         }
     };
+    const handleQuantityChange = (productId, newQuantity) => {
+        if (newQuantity < 1) return;
 
+        // Map over the cart items and update the specific product's quantity and price
+        const updatedItems = cartItems.map(item => {
+            if (item._id === productId) {
+                // Calculate the updated price by multiplying original price with new quantity
+                const updatedPrice = item.price * newQuantity;
+                return { ...item, quantity: newQuantity }; // Update the item with new quantity and price
+            }
+            return item;
+        });
+
+        setCartItems(updatedItems); // Update the state with the new cart items
+
+        if (token) {
+            // Send request to backend to update the cart if logged in
+            axios.post('http://localhost:5004/cart/update',
+                { productId, quantity: newQuantity },
+                {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                })
+                .then((response) => {
+                    console.log('Cart updated on backend:', response.data);
+                })
+                .catch((err) => {
+                    console.error('Failed to update quantity on backend:', err);
+                });
+        } else {
+            // For guest users, update localStorage cart
+            localStorage.setItem('cart', JSON.stringify(updatedItems));
+        }
+    };
     const handleProceedToCheckout = () => {
         navigate('/checkout');
     };
 
+    const calculateTotal = () => {
+        return cartItems.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2);
+    };
+
     return (
         <div className="cart-container">
-
             <div className="cart-main">
                 {loading ? (
                     <p>Loading cart...</p>
@@ -130,6 +167,14 @@ const Cart = () => {
                                     <div className="cart-item-info">
                                         <h4>{item.name}</h4>
                                         <p>${item.price}</p>
+                                        <p>{item.description}</p>
+
+                                        <div className="quantity-control">
+                                            <button onClick={() => handleQuantityChange(item._id, Math.max(item.quantity - 1, 1))}>-</button>
+                                            <span>{item.quantity}</span>
+                                            <button onClick={() => handleQuantityChange(item._id, item.quantity + 1)}>+</button>
+                                        </div>
+
                                         <button onClick={() => handleRemoveItem(item._id)}>Remove</button>
                                     </div>
                                 </div>
@@ -137,14 +182,13 @@ const Cart = () => {
                         )}
                         {cartItems.length > 0 && (
                             <div className="cart-total">
-                                <h3>Total: ${cartItems.reduce((acc, item) => acc + item.price, 0)}</h3>
+                                <h3>Total: ${calculateTotal()}</h3>
                                 <button onClick={handleProceedToCheckout}>Proceed to Checkout</button>
                             </div>
                         )}
                     </div>
                 )}
             </div>
-
         </div>
     );
 };
