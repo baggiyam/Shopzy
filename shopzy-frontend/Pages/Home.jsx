@@ -6,6 +6,8 @@ import '../Styles/home.css';
 const Home = () => {
     const [featured, setFeatured] = useState([]);
     const [trending, setTrending] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredProducts, setFilteredProducts] = useState([]);
     const [newArrivals, setNewArrivals] = useState([]);
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -32,7 +34,20 @@ const Home = () => {
 
         fetchProducts();
     }, []);
+    const handleSearchChange = (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        setSearchTerm(searchTerm);
 
+        // Filter products based on search term
+        if (searchTerm === "") {
+            setFilteredProducts(products);  // Show all products if search term is empty
+        } else {
+            const filtered = products.filter((product) =>
+                product.name.toLowerCase().includes(searchTerm) || product.description.toLowerCase().includes(searchTerm)
+            );
+            setFilteredProducts(filtered);
+        }
+    };
     // Function to add product to cart (localStorage or backend depending on login state)
     const addToCart = (product) => {
         const token = localStorage.getItem('token');

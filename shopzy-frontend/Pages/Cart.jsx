@@ -64,24 +64,64 @@ const Cart = () => {
         }
 
         const quantity = 1; // Default quantity is 1
+        const cartItemIndex = cartItems.findIndex(item => item._id === product._id); // Check if the product already exists in the cart
 
-        if (token) {
-            axios.post(`${import.meta.env.VITE_API_BASE_URL}/cart/add`, { productId: product._id, quantity }, {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                },
-            })
-                .then(() => {
-                    setCartItems(prevItems => [...prevItems, { ...product, quantity, price: product.price }]);
-                })
-                .catch((err) => {
-                    console.log('Failed to add item to cart', err);
-                });
+        if (cartItemIndex > -1) {
+            // If the product exists in the cart, update the quantity
+            const updatedCartItems = [...cartItems];
+            updatedCartItems[cartItemIndex].quantity += quantity; // Increase the quantity
+            setCartItems(updatedCartItems); // Update the cart state
+
+            if (token) {
+                // Update the quantity in the backend if logged in
+                axios.post(
+                    `${import.meta.env.VITE_API_BASE_URL}/cart/update`,
+                    { productId: product._id, quantity: updatedCartItems[cartItemIndex].quantity },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                    .then(() => {
+                        console.log('Cart quantity updated in backend');
+                    })
+                    .catch(() => {
+                        console.error('Failed to update cart quantity on backend');
+                    });
+            } else {
+                // For guest users, update the cart in localStorage
+                localStorage.setItem('cart', JSON.stringify(updatedCartItems));
+            }
         } else {
-            const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
-            storedCartItems.push({ ...product, quantity, price: product.price });
-            localStorage.setItem('cart', JSON.stringify(storedCartItems));
-            setCartItems(storedCartItems);
+            // If the product is not in the cart, add it
+            const newCartItem = { ...product, quantity };
+            const updatedCartItems = [...cartItems, newCartItem];
+            setCartItems(updatedCartItems); // Update the cart state
+
+            if (token) {
+                // Send the new item to the backend if logged in
+                axios.post(
+                    `${import.meta.env.VITE_API_BASE_URL}/cart/add`,
+                    { productId: product._id, quantity },
+                    {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    }
+                )
+                    .then(() => {
+                        console.log('Product added to cart in backend');
+                    })
+                    .catch(() => {
+                        console.log('Failed to add product to cart on backend');
+                    });
+            } else {
+                // For guest users, update the cart in localStorage
+                const storedCartItems = JSON.parse(localStorage.getItem('cart')) || [];
+                storedCartItems.push(newCartItem);
+                localStorage.setItem('cart', JSON.stringify(storedCartItems));
+            }
         }
     };
 
@@ -105,15 +145,15 @@ const Cart = () => {
             setCartItems(updatedCartItems);
         }
     };
+
     const handleQuantityChange = (productId, newQuantity) => {
         if (newQuantity < 1) return;
 
-        // Map over the cart items and update the specific product's quantity and price
+        // Map over the cart items and update the specific product's quantity
         const updatedItems = cartItems.map(item => {
             if (item._id === productId) {
                 // Calculate the updated price by multiplying original price with new quantity
-                const updatedPrice = item.price * newQuantity;
-                return { ...item, quantity: newQuantity }; // Update the item with new quantity and price
+                return { ...item, quantity: newQuantity }; // Update the item with new quantity
             }
             return item;
         });
@@ -128,9 +168,10 @@ const Cart = () => {
                     headers: {
                         Authorization: `Bearer ${token}`,
                     },
-                })
-                .then((response) => {
-                    console.log('Cart updated on backend:', response.data);
+                }
+            )
+                .then(() => {
+                    console.log('Cart updated on backend');
                 })
                 .catch((err) => {
                     console.error('Failed to update quantity on backend:', err);
@@ -140,6 +181,7 @@ const Cart = () => {
             localStorage.setItem('cart', JSON.stringify(updatedItems));
         }
     };
+
     const handleProceedToCheckout = () => {
         navigate('/checkout');
     };
